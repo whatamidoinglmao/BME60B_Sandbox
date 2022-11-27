@@ -10,6 +10,13 @@
 %  Tair Kuzhekov, 
 %  Elian Martin Sian Lintag
 % 
+%  Description:
+%  make a gui of a concert venue
+%  can navigate through sections and choose specific seats to reserve
+%  code has logic to recommend "best seats"
+%       budget: cheapest and keeps party together (seats adjacent)
+%       luxury: closest to stage, central, and keeps party together
+% 
 %==========================================================================
 
 clear 
