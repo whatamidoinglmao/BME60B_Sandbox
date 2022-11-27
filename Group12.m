@@ -16,4 +16,10 @@ clear
 close all
 clc
 
+% modifiable game values
+rows = 10;
+cols = 10;
+numMines = 20;
 
+% initialize game engine
+engine = mineEngine(rows, cols, numMines);
