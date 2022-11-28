@@ -1,8 +1,16 @@
+% todo
+% 1. work out the bomb indexing logic
+% 2. create the basic graphics with buttons and other interactables
+%       remember, when button is clicked, it goes invisible, then draw the
+%       number in the same space
+
+
 classdef mineEngine
 
     properties
         minefield
         numfield
+        graphics
         gamestate
     end
     
@@ -36,20 +44,26 @@ classdef mineEngine
             obj.numfield(rShiftDown,cShiftLeft) = obj.numfield(rShiftDown,cShiftLeft)+obj.minefield(rShiftUp,cShiftRight);
             obj.numfield(rShiftDown,cShiftRight) = obj.numfield(rShiftDown,cShiftRight)+obj.minefield(rShiftUp,cShiftLeft);
 
+
+           % initate the game window
+           obj.graphics = figure('Name', 'group12 minesweeper', ...
+               'Visible', 'off');
+
             % set the game state to start
             obj.gamestate = 'start';
 
         end
 
         % check for mine
-        function check = checkBomb(row,col)
+        function [check,state] = checkBomb(obj, row,col)
             check = obj.minefield(row,col);
 
             % if they click on a bomb, gameover
             if check
-                obj.gamestate = 'gameover';
+                state = 'gameover';
+            else
+                state = obj.gamestate;
             end
-
         end
         
     end
