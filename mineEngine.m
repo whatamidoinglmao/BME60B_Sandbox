@@ -69,7 +69,6 @@ classdef mineEngine
                 state = 'gameover';
             else
                 state = obj.gamestate;
-                uncover(button)
             end
         end
         
