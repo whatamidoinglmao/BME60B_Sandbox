@@ -4,6 +4,15 @@
 %       remember, when button is clicked, it goes invisible, then draw the
 %       number in the same space
 
+%empty figure 10x10
+figure('Name','ElianisAgenius','NumberTitle','off')
+row = 10;
+col = 10;
+for i = 1:row
+for j = 1:col
+uicontrol('Style','Pushbutton','position',[10+j*33,10+i*33,35,35])
+end
+end
 
 classdef mineEngine
 
