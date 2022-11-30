@@ -25,4 +25,10 @@ cols = 10;
 numMines = 20;
 
 % initialize game engine
-engine = mineEngine(rows, cols, numMines);
+engine = mineEngine(rows, cols, numMines);\
+
+
+
+% code code code
+
+disp("wow this some cool code yay :)")
