@@ -27,8 +27,5 @@ numMines = 20;
 % initialize game engine
 engine = mineEngine(rows, cols, numMines);
 
-
-
-% code code code
-
-disp("wow this some cool code yay :)")
+% open the figure
+set(engine.graphics,'Visible','on')

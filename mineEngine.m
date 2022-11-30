@@ -4,16 +4,6 @@
 %       remember, when button is clicked, it goes invisible, then draw the
 %       number in the same space
 
-%empty figure 10x10
-figure('Name','ElianisAgenius','NumberTitle','off')
-row = 10;
-col = 10;
-for i = 1:row
-for j = 1:col
-uicontrol('Style','Pushbutton','position',[10+j*33,10+i*33,35,35])
-end
-end
-
 classdef mineEngine
 
     properties
@@ -54,16 +44,23 @@ classdef mineEngine
             obj.numfield(rShiftDown,cShiftRight) = obj.numfield(rShiftDown,cShiftRight)+obj.minefield(rShiftUp,cShiftLeft);
 
 
-           % initate the game window
-           obj.graphics = figure('Name', 'group12 minesweeper', ...
-               'Visible', 'off');
+           % init empty figure 10x10
+            obj.graphics = figure('Name','ElianisAgenius',...
+                'NumberTitle','off',...
+                'Visible', 'off');
+            for i = 1:rows
+                for j = 1:cols
+                    uicontrol('Style','Pushbutton',...
+                        'position',[10+j*34,10+i*34,35,35]);
+                end
+            end
 
             % set the game state to start
             obj.gamestate = 'start';
 
         end
 
-        % check for mine
+        % check for mine (very basic function, will need rewriting)
         function [check,state] = checkBomb(obj, row,col)
             check = obj.minefield(row,col);
 
@@ -72,6 +69,7 @@ classdef mineEngine
                 state = 'gameover';
             else
                 state = obj.gamestate;
+                uncover(button)
             end
         end
         
