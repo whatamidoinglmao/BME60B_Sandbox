@@ -47,6 +47,12 @@ classdef mineEngine
 
         end
 
+%         % flagging a tile
+%         function output = flagBomb(buttons,row,col)
+%             buttons(row,col)
+%         end
+
+
         % check for mine (very basic function, will need rewriting)
         function [check,state] = checkBomb(obj, row,col)
             check = obj.minefield(row,col);

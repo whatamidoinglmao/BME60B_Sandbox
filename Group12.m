@@ -31,9 +31,12 @@ engine = mineEngine(rows, cols, numMines);
 graphics = figure('Name','ElianisAgenius',...
     'NumberTitle','off',...
     'Visible', 'off');
+
+buttons = gobjects(rows, cols);
+
 for i = 1:rows
     for j = 1:cols
-        uicontrol('Style','Pushbutton',...
+        buttons(i,j) = uicontrol('Style','Pushbutton',...
             'position',[10+j*34,10+i*34,35,35]);
     end
 end
