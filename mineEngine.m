@@ -9,7 +9,6 @@ classdef mineEngine
     properties
         minefield
         numfield
-        graphics
         gamestate
     end
     
@@ -42,18 +41,6 @@ classdef mineEngine
             obj.numfield(rShiftUp,cShiftRight) = obj.numfield(rShiftUp,cShiftRight)+obj.minefield(rShiftDown,cShiftLeft);
             obj.numfield(rShiftDown,cShiftLeft) = obj.numfield(rShiftDown,cShiftLeft)+obj.minefield(rShiftUp,cShiftRight);
             obj.numfield(rShiftDown,cShiftRight) = obj.numfield(rShiftDown,cShiftRight)+obj.minefield(rShiftUp,cShiftLeft);
-
-
-           % init empty figure 10x10
-            obj.graphics = figure('Name','ElianisAgenius',...
-                'NumberTitle','off',...
-                'Visible', 'off');
-            for i = 1:rows
-                for j = 1:cols
-                    uicontrol('Style','Pushbutton',...
-                        'position',[10+j*34,10+i*34,35,35]);
-                end
-            end
 
             % set the game state to start
             obj.gamestate = 'start';
