@@ -39,7 +39,7 @@ for i = 1:rows
     for j = 1:cols
         buttons(i,j) = uicontrol('Style','Pushbutton',...
             'position',[10+j*34,10+i*34,35,35], ...
-            'Callback', @buttonPushed, ...
+            'Callback', @engine.buttonPressed, ...
             'ButtonDownFcn', @engine.flagBomb, ...
             'UserData', [i, j, 0]);
     end
@@ -49,12 +49,3 @@ end
 set(window,'Visible','on')
 
 
-% callback function
-function buttonPushed(src, event)
-    index = get(src, 'UserData');
-    i = index(1);
-    j = index(2);
-    set(src, 'Visible','off');
-
-end
-    

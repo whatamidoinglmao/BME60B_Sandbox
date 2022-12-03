@@ -1,8 +1,5 @@
 % todo
-% 1. work out the bomb indexing logic
-% 2. create the basic graphics with buttons and other interactables
-%       remember, when button is clicked, it goes invisible, then draw the
-%       number in the same space
+% 1. expand buttonPressed function to add logic
 
 classdef mineEngine
 
@@ -48,7 +45,7 @@ classdef mineEngine
         end
 
         % flagging a tile
-        function obj = flagBomb(obj, src, evt)
+        function flagBomb(obj, src, evt)
 
             figHandle = ancestor(src, 'figure');
             click = get(figHandle, 'SelectionType');
@@ -74,7 +71,7 @@ classdef mineEngine
                 % if the current button is flagged
                 elseif flagStatus == 1
 
-%                     set(src, 'Callback', [uncover function])
+                    set(src, 'Callback', @obj.buttonPressed)
                     disp("unflagged")
                     set(src, 'String', '')
                     set(src, 'UserData', [row,col,0])
@@ -86,6 +83,12 @@ classdef mineEngine
 
         end
 
+        % uncover function
+        function buttonPressed(obj, src, evt)
+           
+            set(src, 'Visible','off');
+        
+        end
 
         % check for mine (very basic function, will need rewriting)
         function [check,state] = checkBomb(obj, row,col)
