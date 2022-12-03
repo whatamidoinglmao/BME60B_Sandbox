@@ -84,36 +84,27 @@ classdef mineEngine
         end
 
         % uncover function
-        function buttonPressed(obj, src, evt, row, col)
-           
-            set(src, 'Visible','off');
+        function obj = buttonPressed(obj, src, evt)
+
+            buttonData = get(src, 'UserData');
+            row = buttonData(1);
+            col = buttonData(2);
 
             check = obj.minefield(row,col);
 
             % if they click on a bomb, gameover
             if check
-                state = 'gameover';
-                set(src, 'Color', 'r', 'String', 'X');
-                set(obj.minefield, 'Callback', '')
+                obj.gamestate = 'gameover';
+                set(src, 'BackgroundColor', 'r', 'String', 'X');
+                set(src, 'Callback', '');
+            else
+                set(src, 'Visible','off');
             end
 
         
         end
 
-        % check for mine (very basic function, will need rewriting)
-        function [check,state] = checkBomb(obj, src, row, col)
-
-            check = obj.minefield(row,col);
-
-            % if they click on a bomb, gameover
-            if check
-                state = 'gameover';
-                set(src, 'Color', 'r', 'String', 'X');
-                set(obj.minefield, 'Callback', '')
-            else
-                state = obj.gamestate;
-            end
-        end
+        
         
     end
 end
