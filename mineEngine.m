@@ -47,10 +47,44 @@ classdef mineEngine
 
         end
 
-%         % flagging a tile
-%         function output = flagBomb(buttons,row,col)
-%             buttons(row,col)
-%         end
+        % flagging a tile
+        function obj = flagBomb(obj, src, evt)
+
+            figHandle = ancestor(src, 'figure');
+            click = get(figHandle, 'SelectionType');
+
+            buttData = get(src, 'UserData');
+
+            % define data for ease of use
+            row = buttData(1);
+            col = buttData(2);
+            flagStatus = buttData(3);
+            
+            % checks if it is a right click
+            if strcmp(click, 'alt')
+                
+                % if the current button isn't flagged
+                if flagStatus == 0
+
+                    set(src, 'Callback', '') % prevents being able to uncover tile
+                    disp("flagged") % DELETE debugging purposes
+                    set(src, 'String', 'F')
+                    set(src, 'UserData', [row, col, 1]);
+
+                % if the current button is flagged
+                elseif flagStatus == 1
+
+%                     set(src, 'Callback', [uncover function])
+                    disp("unflagged")
+                    set(src, 'String', '')
+                    set(src, 'UserData', [row,col,0])
+
+                end
+                
+
+            end
+
+        end
 
 
         % check for mine (very basic function, will need rewriting)
