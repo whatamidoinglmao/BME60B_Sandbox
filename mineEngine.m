@@ -116,17 +116,16 @@ classdef mineEngine
             if check
                 obj.gamestate = 'gameover';
 
-                rows = length(obj.buttons(:,1));
-                cols = rows;
-
-%                 for i = 1:rows
-%                     for j = 1:cols
-%                         set(obj.buttons(i,j), 'Callback', '')
-%                     end
-%                 end
-
                 set(src, 'BackgroundColor', 'r', 'String', 'X');
-                set(src, 'Callback', '');
+
+                figureHandle = ancestor(src, 'figure');
+                buttonNum = length(figureHandle.Children);
+
+                % disable all the buttons
+                for i = 1:buttonNum
+                    set(figureHandle.Children(i), 'Callback', '')
+                end
+
             else
                 set(src, 'Visible','off');
             end
