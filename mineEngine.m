@@ -6,6 +6,8 @@ classdef mineEngine
     properties
         minefield
         numfield
+        window
+        buttons
         gamestate
     end
     
@@ -38,6 +40,24 @@ classdef mineEngine
             obj.numfield(rShiftUp,cShiftRight) = obj.numfield(rShiftUp,cShiftRight)+obj.minefield(rShiftDown,cShiftLeft);
             obj.numfield(rShiftDown,cShiftLeft) = obj.numfield(rShiftDown,cShiftLeft)+obj.minefield(rShiftUp,cShiftRight);
             obj.numfield(rShiftDown,cShiftRight) = obj.numfield(rShiftDown,cShiftRight)+obj.minefield(rShiftUp,cShiftLeft);
+
+            % init empty figure 10x10
+            obj.window = figure('Name','ElianisAgenius',...
+                'NumberTitle','off',...
+                'Visible', 'off');
+            
+            % init buttons
+            obj.buttons = gobjects(rows, cols);
+            
+            for i = 1:rows
+                for j = 1:cols
+                    obj.buttons(i,j) = uicontrol('Style','Pushbutton',...
+                        'position',[10+j*34,10+i*34,35,35], ...
+                        'Callback', @obj.buttonPressed, ...
+                        'ButtonDownFcn', @obj.flagBomb, ...
+                        'UserData', [i, j, 0]);
+                end
+            end
 
             % set the game state to start
             obj.gamestate = 'start';
@@ -95,6 +115,16 @@ classdef mineEngine
             % if they click on a bomb, gameover
             if check
                 obj.gamestate = 'gameover';
+
+                rows = length(obj.buttons(:,1));
+                cols = rows;
+
+%                 for i = 1:rows
+%                     for j = 1:cols
+%                         set(obj.buttons(i,j), 'Callback', '')
+%                     end
+%                 end
+
                 set(src, 'BackgroundColor', 'r', 'String', 'X');
                 set(src, 'Callback', '');
             else

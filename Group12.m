@@ -27,25 +27,7 @@ numMines = 20;
 % initialize game engine
 engine = mineEngine(rows, cols, numMines);
 
-% init empty figure 10x10
-window = figure('Name','ElianisAgenius',...
-    'NumberTitle','off',...
-    'Visible', 'off');
-
-% init buttons
-buttons = gobjects(rows, cols);
-
-for i = 1:rows
-    for j = 1:cols
-        buttons(i,j) = uicontrol('Style','Pushbutton',...
-            'position',[10+j*34,10+i*34,35,35], ...
-            'Callback', @engine.buttonPressed, ...
-            'ButtonDownFcn', @engine.flagBomb, ...
-            'UserData', [i, j, 0]);
-    end
-end
-
 % open the figure
-set(window,'Visible','on')
+set(engine.window,'Visible','on')
 
 
