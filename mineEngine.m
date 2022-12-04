@@ -7,6 +7,7 @@ classdef mineEngine
         minefield
         numfield
         window
+        axes
         buttons
         gamestate
     end
@@ -41,11 +42,21 @@ classdef mineEngine
             obj.numfield(rShiftDown,cShiftLeft) = obj.numfield(rShiftDown,cShiftLeft)+obj.minefield(rShiftUp,cShiftRight);
             obj.numfield(rShiftDown,cShiftRight) = obj.numfield(rShiftDown,cShiftRight)+obj.minefield(rShiftUp,cShiftLeft);
 
+            % set each mine location to -1 (mainly debugging purposes)
+            obj.numfield(obj.minefield) = -1;
+
             % init empty figure 10x10
             obj.window = figure('Name','ElianisAgenius',...
                 'NumberTitle','off',...
                 'Visible', 'off');
             
+            % figure axes
+            obj.axes = axes('Units', 'pixels', ...
+                'PlotBoxAspectRatio', [1,1,1], ...
+                'Position', [44,44, rows*34, cols*34], ... % if we change the position of the buttons this position has to match the first button
+                'XLim', [0, cols*35], ...
+                'YLim', [0, rows*35]);
+
             % init buttons
             obj.buttons = gobjects(rows, cols);
             
@@ -98,63 +109,18 @@ classdef mineEngine
                     set(src, 'UserData', [row,col,0,0])
 
                 end
-                
 
             end
 
         end
 
-        %Recursive Function
-        function obj = recursionSquares(obj,A,row,col)
-            gridMap = fliplr(rot90(reshape(A,[height(obj.minefield),width(obj.minefield)]),1)); % Reformatted array button matrix
-
-            buttData = get(gridMap(row,col), 'UserData');
-            visited = buttData(4); % Whether square was pressed
-
-            if obj.numfield(row,col)==0 &&visited == 0
-
-                % Identifying numField == 0
-                set(gridMap(row,col), 'Callback', '','BackgroundColor', 'g', 'String', 'Y');
-                set(gridMap(row,col), 'UserData', [row, col, 0,1]);
-                try % Checking for adjacent rows/cols for recursion uncover
-                    if row > 1
-                    obj.recursionSquares(A,row-1, col)
-                    end
-                    if row < height(obj.minefield)
-                        obj.recursionSquares(A,row+1, col)
-                    end
-                    if col > 1
-                        obj.recursionSquares(A,row, col-1)
-                    end
-                    if col < height(obj.minefield)
-                        obj.recursionSquares(A,row, col+1)   
-                    end
-                    if row > 1 && col >1
-                        obj.recursionSquares(A,row-1, col-1)
-                    end
-                    if row > 1 && col < height(obj.minefield)
-                        obj.recursionSquares(A,row-1, col+1)
-                    end
-                    if row < height(obj.minefield) && col > 1
-                        obj.recursionSquares(A,row+1, col-1)
-                    end
-                    if row < height(obj.minefield) && col < height(obj.minefield)
-                        obj.recursionSquares(A,row+1+1, col+1)  
-                    end
-                catch
-                end
-            elseif obj.numfield(row,col)~=0 &&visited == 0 % Closing recursion (non-zero in Numfield)
-                set(gridMap(row,col), 'Callback', '','BackgroundColor', 'g', 'String', int8(obj.numfield(row,col)));
-                set(gridMap(row,col), 'UserData', [row, col, 0,1]);
-            end
-      
-        end
-        % uncover function
+        % button press function
         function obj = buttonPressed(obj, src, evt)
 
             buttonData = get(src, 'UserData');
             row = buttonData(1);
             col = buttonData(2);
+            numButtons = numel(obj.buttons);
 
             figureHand = ancestor(src, 'figure');
             
@@ -167,21 +133,72 @@ classdef mineEngine
                 set(src, 'BackgroundColor', 'r', 'String', 'X');
 
                 figureHandle = ancestor(src, 'figure');
-                buttonNum = length(figureHandle.Children);
 
                 % disable all the buttons
-                for i = 1:buttonNum
+                for i = 1:numButtons
                     set(figureHandle.Children(i), 'Callback', '')
                 end
 
+            % if not a bomb, uncover the squares
             else
-                obj.recursionSquares(figureHand.Children,row,col);
+                obj.recursionSquares(figureHand.Children((end-numButtons):end-1),row,col);
             end
 
         
         end
 
-        
+
+        % Recursive Function (basically function to uncover squares)
+        function obj = recursionSquares(obj,A,row,col)
+            gridMap = fliplr(rot90(reshape(A,[height(obj.minefield),width(obj.minefield)]),1)); % Reformatted array button matrix
+
+            buttData = get(gridMap(row,col), 'UserData');
+            visited = buttData(4); % Whether square was pressed
+
+            if obj.numfield(row,col) == 0 && visited == 0
+
+                % Identifying numField == 0
+                set(gridMap(row,col), 'Visible', 'off');
+                set(gridMap(row,col), 'UserData', [row, col, 0,1]);
+                try % Checking for adjacent rows/cols for recursion uncover
+                    if row > 1
+                        obj.recursionSquares(A,row-1, col);
+                    end
+                    if row < height(obj.minefield)
+                        obj.recursionSquares(A,row+1, col);
+                    end
+                    if col > 1
+                        obj.recursionSquares(A,row, col-1);
+                    end
+                    if col < height(obj.minefield)
+                        obj.recursionSquares(A,row, col+1);   
+                    end
+                    if row > 1 && col >1
+                        obj.recursionSquares(A,row-1, col-1);
+                    end
+                    if row > 1 && col < height(obj.minefield)
+                        obj.recursionSquares(A,row-1, col+1);
+                    end
+                    if row < height(obj.minefield) && col > 1
+                        obj.recursionSquares(A,row+1, col-1);
+                    end
+                    if row < height(obj.minefield) && col < height(obj.minefield)
+                        obj.recursionSquares(A,row+1, col+1);
+                    end
+                catch
+                end
+            elseif obj.numfield(row,col)~=0 && visited == 0 % Closing recursion (non-zero in Numfield)
+
+                set(gridMap(row,col),'Visible', 'off', 'String', int8(obj.numfield(row,col)));
+
+                text('Position', [((col-0.5)*35)-3, ((row-0.5)*35)+2], ...
+                    'String', num2str(obj.numfield(row, col)));
+
+                set(gridMap(row,col), 'UserData', [row, col, 0, 1]);
+
+            end
+      
+        end
         
     end
 end

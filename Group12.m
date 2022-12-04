@@ -22,7 +22,7 @@ clc
 % modifiable game values
 rows = 10;
 cols = 10;
-numMines = 20;
+numMines = 15;
 
 % initialize game engine
 engine = mineEngine(rows, cols, numMines);
