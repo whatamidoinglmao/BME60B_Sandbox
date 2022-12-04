@@ -3,12 +3,12 @@
 
 classdef mineEngine
 
-    properties
+    properties 
         minefield
         numfield
-        window
-        axes
-        buttons
+        window % idk how necessary this property and the below are, could probably remove them
+        numMineButtons
+        xtraUI
         gamestate
     end
     
@@ -17,6 +17,9 @@ classdef mineEngine
         % init method
         function obj = mineEngine(rows, cols, numMines)
             
+            % number of game buttons
+            obj.numMineButtons = rows*cols;
+
             % create random array to make a logical minefield
             ranNums = randperm(rows*cols, rows*cols);
             tempMines = reshape(ranNums, rows, cols);
@@ -49,21 +52,38 @@ classdef mineEngine
             obj.window = figure('Name','ElianisAgenius',...
                 'NumberTitle','off',...
                 'Visible', 'off');
+
+            % parameters for drawing figure
+            buttonWidth = 35;
+            spaceWidth = 34;
+            xoff = 10;
+            yoff = 10;
             
+            %-------extra stuff in figure that should stay constant--------
+
+            % number of extra elements in figure (UPDATE WHENEVER YOU ADD SOMETHING)
+            obj.xtraUI = 2;
+
             % figure axes
-            obj.axes = axes('Units', 'pixels', ...
+            axes('Units', 'pixels', ...
                 'PlotBoxAspectRatio', [1,1,1], ...
-                'Position', [44,44, rows*34, cols*34], ... % if we change the position of the buttons this position has to match the first button
+                'Position', [xoff+spaceWidth,yoff+spaceWidth, rows*spaceWidth, cols*spaceWidth], ... % if we change the position of the buttons this position has to match the first button
                 'XLim', [0, cols*35], ...
                 'YLim', [0, rows*35]);
 
-            % init buttons
-            obj.buttons = gobjects(rows, cols);
+            % new game button
+            uicontrol('Style', 'Pushbutton', ...
+                'Position', [xoff+(rows*spaceWidth)+100, yoff+(cols/5)*spaceWidth, 100, 50]);
+
+            %--------------------------------------------------------------
+
+            % init buttons for the game
+            mineButtons = gobjects(rows, cols);
             
             for i = 1:rows
                 for j = 1:cols
-                    obj.buttons(i,j) = uicontrol('Style','Pushbutton',...
-                        'position',[10+j*34,10+i*34,35,35], ...
+                    mineButtons(i,j) = uicontrol('Style','Pushbutton',...
+                        'position',[xoff+j*spaceWidth,yoff+i*spaceWidth,buttonWidth,buttonWidth], ...
                         'Callback', @obj.buttonPressed, ...
                         'ButtonDownFcn', @obj.flagBomb, ...
                         'String', int8(obj.numfield(i,j)), ...
@@ -76,6 +96,11 @@ classdef mineEngine
 
         end
 
+        % start a new game
+        function newGame(rows, cols, numMines)
+
+        end
+        
         % flagging a tile
         function flagBomb(obj, src, evt)
 
@@ -96,16 +121,14 @@ classdef mineEngine
                 if flagStatus == 0
 
                     set(src, 'Callback', '') % prevents being able to uncover tile
-                    disp("flagged") % DELETE debugging purposes
                     set(src, 'String', 'F')
-                    set(src, 'UserData', [row, col, 1,0]);
+                    set(src, 'UserData', [row,col,1,0]);
 
                 % if the current button is flagged
                 elseif flagStatus == 1
 
                     set(src, 'Callback', @obj.buttonPressed)
-                    disp("unflagged")
-                    set(src, 'String', '')
+                    set(src, 'String', obj.numfield(row,col))
                     set(src, 'UserData', [row,col,0,0])
 
                 end
@@ -115,14 +138,18 @@ classdef mineEngine
         end
 
         % button press function
-        function obj = buttonPressed(obj, src, evt)
+        function buttonPressed(obj, src, evt)
 
             buttonData = get(src, 'UserData');
             row = buttonData(1);
             col = buttonData(2);
-            numButtons = numel(obj.buttons);
+            numButtons = obj.numMineButtons;
 
             figureHand = ancestor(src, 'figure');
+            numUI = numel(figureHand.Children);
+            start = numUI - obj.xtraUI;
+            buttonArray = figureHand.Children(start-(numButtons-1):start);
+            gridMap = fliplr(rot90(reshape(buttonArray,[height(obj.minefield),width(obj.minefield)]),1)); % Reformatted array button matrix
             
             check = obj.minefield(row,col);
 
@@ -130,18 +157,17 @@ classdef mineEngine
             if check
                 obj.gamestate = 'gameover';
 
-                set(src, 'BackgroundColor', 'r', 'String', 'X');
-
-                figureHandle = ancestor(src, 'figure');
+                mines = gridMap(obj.minefield);
+                set(mines, 'BackgroundColor', 'r', 'String', 'X');
 
                 % disable all the buttons
                 for i = 1:numButtons
-                    set(figureHandle.Children(i), 'Callback', '')
+                    set(gridMap, 'Callback', '', 'ButtonDownFcn', '')
                 end
 
             % if not a bomb, uncover the squares
             else
-                obj.recursionSquares(figureHand.Children((end-numButtons):end-1),row,col);
+                obj.recursionSquares(gridMap,row,col);
             end
 
         
@@ -149,8 +175,7 @@ classdef mineEngine
 
 
         % Recursive Function (basically function to uncover squares)
-        function obj = recursionSquares(obj,A,row,col)
-            gridMap = fliplr(rot90(reshape(A,[height(obj.minefield),width(obj.minefield)]),1)); % Reformatted array button matrix
+        function recursionSquares(obj,gridMap,row,col)
 
             buttData = get(gridMap(row,col), 'UserData');
             visited = buttData(4); % Whether square was pressed
@@ -162,28 +187,28 @@ classdef mineEngine
                 set(gridMap(row,col), 'UserData', [row, col, 0,1]);
                 try % Checking for adjacent rows/cols for recursion uncover
                     if row > 1
-                        obj.recursionSquares(A,row-1, col);
+                        obj.recursionSquares(gridMap,row-1, col);
                     end
                     if row < height(obj.minefield)
-                        obj.recursionSquares(A,row+1, col);
+                        obj.recursionSquares(gridMap,row+1, col);
                     end
                     if col > 1
-                        obj.recursionSquares(A,row, col-1);
+                        obj.recursionSquares(gridMap,row, col-1);
                     end
                     if col < height(obj.minefield)
-                        obj.recursionSquares(A,row, col+1);   
+                        obj.recursionSquares(gridMap,row, col+1);   
                     end
                     if row > 1 && col >1
-                        obj.recursionSquares(A,row-1, col-1);
+                        obj.recursionSquares(gridMap,row-1, col-1);
                     end
                     if row > 1 && col < height(obj.minefield)
-                        obj.recursionSquares(A,row-1, col+1);
+                        obj.recursionSquares(gridMap,row-1, col+1);
                     end
                     if row < height(obj.minefield) && col > 1
-                        obj.recursionSquares(A,row+1, col-1);
+                        obj.recursionSquares(gridMap,row+1, col-1);
                     end
                     if row < height(obj.minefield) && col < height(obj.minefield)
-                        obj.recursionSquares(A,row+1, col+1);
+                        obj.recursionSquares(gridMap,row+1, col+1);
                     end
                 catch
                 end
