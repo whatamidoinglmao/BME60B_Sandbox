@@ -52,7 +52,7 @@ while true
         while true
             number = round(input(strcat('\n', custom_prompt)));
             if number > 0
-                mines = round(0.15 * number^2); 
+                mines = round(0.20 * number^2); 
                 fprintf('nice\n')
                 break
             else
