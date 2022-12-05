@@ -20,23 +20,29 @@ close all
 clc
 
 prompt ='Choose difficulty: easy = 1, intermediate = 2, hard = 3 (type 1, 2, or 3) \n';
+custom_prompt = 'Input how big you want the grid to be. ex: Inputting 3 would return 3 by 3 grid.\n';
 User_output = input(prompt);
 
+% Creating the grid
 while true
     if (User_output == 1)
         number = 5;
         mines = 4;
-        break
+        break;
     elseif (User_output== 2)
         number = 10;
         mines = 15;
-        break
+        break;
     elseif (User_output == 3)
         number = 15;
         mines = 35;
-        break
+        break;
+    elseif (User_output == 0)
+        number = input(custom_prompt);
+        mines = round(0.15 * number^2); 
+        break;
     else 
-        fprintf('Invalid answer. Choose 1,2, or 3.\n') 
+        fprintf('Invalid answer. Choose 0,1,2, or 3.') 
         User_output = input(prompt);
     end 
 end
