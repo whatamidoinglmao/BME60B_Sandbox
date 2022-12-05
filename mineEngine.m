@@ -67,7 +67,7 @@ classdef mineEngine
             %-------extra stuff in figure that should stay constant--------
 
             % number of extra elements in figure (UPDATE WHENEVER YOU ADD SOMETHING)
-            obj.xtraUI = 4;
+            obj.xtraUI = 3;
 
             % figure axes
             axes('Units', 'pixels', ...
@@ -76,17 +76,11 @@ classdef mineEngine
                 'XLim', [0, cols*35], ...
                 'YLim', [0, rows*35]);
 
-            % dumb new game button
+            % new game button
             uicontrol('Style', 'Pushbutton', ...
                 'Position', [xoff+(rows*spaceWidth)+100, yoff+(cols/5)*spaceWidth, 100, 50], ...
                 'Callback', @obj.newGame, ...
-                'String', "dumb new game");
-
-            % temp new game button
-            uicontrol('Style', 'pushbutton', ...
-                'Position', [xoff+(rows*spaceWidth)+100, yoff+(cols/5)*spaceWidth+100, 100, 50], ...
-                'Callback', @obj.expNewGame, ...
-                'String', "exp new game");
+                'String', "new game");
 
             % mine counter
             uicontrol('Style','Text', ...
@@ -124,7 +118,7 @@ classdef mineEngine
             flagStatus = buttData(3);
 
             numUI = numel(figHandle.Children);
-            remainingText = figHandle.Children(numUI-3);
+            remainingText = figHandle.Children(numUI-2);
             remainingString = get(remainingText, 'String');
             remaining = str2double(remainingString);
             
@@ -204,7 +198,7 @@ classdef mineEngine
 
             % if you manage to uncover a flagged tile, +1 to remaining
             if flagStatus == 1
-                    remainingText = figHandle.Children(end-3);
+                    remainingText = figHandle.Children(end-2);
                     remainingString = get(remainingText, 'String');
                     remaining = str2double(remainingString);
                     remaining = remaining + 1;
@@ -257,18 +251,9 @@ classdef mineEngine
             end
       
         end
-        
-       % start a new game (dumb version)
-        function newGame(obj, src, evt)
-            close(gcf)
-            num = obj.gameStats(1);
-            mines = obj.gameStats(2);
-            obj = mineEngine(num, num, mines);
-            set(obj.window, 'Visible', 'on')
-        end
 
         % start a new game (experimental)
-        function expNewGame(obj,src,evt)
+        function newGame(obj,src,evt)
 
             % delete everything from prev game
             figHandle = ancestor(src, 'figure');
@@ -306,7 +291,7 @@ classdef mineEngine
             % parameters for drawing figure
             buttonWidth = 35; spaceWidth = 34; xoff = 10; yoff = 10; % IMPORTANT ********** UPDATE THIS IF YOU UPDATE IT AT THE START
 
-            remainingText = figHandle.Children(end - 3);
+            remainingText = figHandle.Children(end - 2);
             set(remainingText, 'String', num2str(numMines))
 
             % init buttons for the game
