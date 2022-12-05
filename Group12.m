@@ -19,11 +19,11 @@ clear
 close all
 clc
 
-prompt ='Choose difficulty: easy = 1, intermediate = 2, hard = 3 (type 1, 2, or 3) \n';
+prompt ='Choose difficulty: custom grid = 0, easy = 1, intermediate = 2, hard = 3 (type 0,1, 2, or 3) \n';
 custom_prompt = 'Input how big you want the grid to be. ex: Inputting 3 would return 3 by 3 grid.\n';
 User_output = input(prompt);
 
-% Creating the grid
+%Creating the grid
 while true
     if (User_output == 1)
         number = 5;
