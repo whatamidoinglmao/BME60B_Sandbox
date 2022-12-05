@@ -19,23 +19,28 @@ clear
 close all
 clc
 
-
 prompt ='Choose difficulty: easy = 1, intermediate = 2, hard = 3 (type 1, 2, or 3) \n';
 User_output = input(prompt);
 
-if (User_output == 1)
-    number = 5;
-    mines = 4;
-elseif (User_output== 2)
-    number = 10;
-    mines = 15;
-elseif (User_output == 3)
-    number = 15;
-    mines = 35;
-else 
-    fprintf('Invalid answer. Choose 1,2, or 3.') 
-    User_output = input(prompt);
-end 
+while true
+    if (User_output == 1)
+        number = 5;
+        mines = 4;
+        break
+    elseif (User_output== 2)
+        number = 10;
+        mines = 15;
+        break
+    elseif (User_output == 3)
+        number = 15;
+        mines = 35;
+        break
+    else 
+        fprintf('Invalid answer. Choose 1,2, or 3.\n') 
+        User_output = input(prompt);
+    end 
+end
+
 % modifiable game values
 rows = number;
 cols = number;
